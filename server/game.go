@@ -6,6 +6,36 @@ import (
 	"time"
 )
 
+type GameBuilder struct {
+	seed        int64
+	playerCount int
+}
+
+func NewGameBuilder() *GameBuilder {
+	return &GameBuilder{
+		seed:        time.Now().UnixNano(),
+		playerCount: 3,
+	}
+}
+
+func (gb *GameBuilder) SetSeed(seed int64) *GameBuilder {
+	gb.seed = seed
+	return gb
+}
+
+func (gb *GameBuilder) SetPlayerCount(count int) *GameBuilder {
+	if count < 3 || count > 7 {
+		panic("player count invalid, must be 3-7")
+	}
+
+	gb.playerCount = count
+	return gb
+}
+
+func (gb *GameBuilder) Build() *Game {
+	return NewGame(gb.seed, gb.playerCount)
+}
+
 type Game struct {
 	deck           []int
 	floatingTokens int
@@ -13,7 +43,7 @@ type Game struct {
 	playerTurn     int
 }
 
-func NewGame(playerCount int) *Game {
+func NewGame(seed int64, playerCount int) *Game {
 	var deck []int
 	var players []Player
 
@@ -22,7 +52,7 @@ func NewGame(playerCount int) *Game {
 		deck = append(deck, i)
 	}
 
-	rand.New(rand.NewSource(time.Now().UnixNano()))
+	rand.New(rand.NewSource(seed))
 	rand.Shuffle(len(deck), func(i, j int) { deck[i], deck[j] = deck[j], deck[i] })
 
 	deck = deck[9:]
