@@ -15,7 +15,16 @@ func NewPlayer(tokens int) *Player {
 	return &Player{Tokens: tokens}
 }
 
-func main() {
+func (p Player) String() string {
+	return fmt.Sprintf("cards: %d, tokens: %d", p.Cards, p.Tokens)
+}
+
+type Game struct {
+	deck    []int
+	players []Player
+}
+
+func NewGame() *Game {
 	var deck []int
 	var players []Player
 
@@ -34,7 +43,23 @@ func main() {
 		players = append(players, *NewPlayer(11))
 	}
 
-	fmt.Println("deck: ", deck)
-	fmt.Println("deck count: ", len(deck))
-	fmt.Println("players: ", players)
+	return &Game{
+		deck:    deck,
+		players: players,
+	}
+}
+
+func (g Game) String() string {
+	output := ""
+	output += fmt.Sprintf("deck: %d", g.deck)
+	for i := range g.players {
+		output += fmt.Sprintf("\nplayer %d: %s", i, g.players[i].String())
+	}
+	return output
+}
+
+func main() {
+	game := NewGame()
+
+	fmt.Println(game)
 }
