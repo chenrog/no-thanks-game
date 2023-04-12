@@ -37,10 +37,10 @@ func (gb *GameBuilder) Build() *Game {
 }
 
 type Game struct {
-	deck           []int
-	floatingTokens int
-	players        []Player
-	playerTurn     int
+	Deck           []int
+	FloatingTokens int
+	Players        []Player
+	PlayerTurn     int
 }
 
 func NewGame(seed int64, playerCount int) *Game {
@@ -65,38 +65,38 @@ func NewGame(seed int64, playerCount int) *Game {
 	rand.Shuffle(len(players), func(i, j int) { players[i], players[j] = players[j], players[i] })
 
 	return &Game{
-		deck:           deck,
-		floatingTokens: 0,
-		players:        players,
-		playerTurn:     0,
+		Deck:           deck,
+		FloatingTokens: 0,
+		Players:        players,
+		PlayerTurn:     0,
 	}
 }
 
 func (g *Game) Action(action int) {
 	// Pass
 	if action == 0 {
-		g.players[g.playerTurn].RemoveToken()
-		g.floatingTokens += 1
-		g.playerTurn += 1
+		g.Players[g.PlayerTurn].RemoveToken()
+		g.FloatingTokens += 1
+		g.PlayerTurn += 1
 		fmt.Println("here")
 	}
 
 	// Take
 	if action == 1 {
-		g.players[g.playerTurn].AddTokens(g.floatingTokens)
-		g.floatingTokens = 0
-		g.players[g.playerTurn].AddCard(g.deck[0])
-		g.deck = g.deck[1:]
+		g.Players[g.PlayerTurn].AddTokens(g.FloatingTokens)
+		g.FloatingTokens = 0
+		g.Players[g.PlayerTurn].AddCard(g.Deck[0])
+		g.Deck = g.Deck[1:]
 	}
 }
 
 func (g *Game) String() string {
 	output := ""
-	output += fmt.Sprintf("deck(%d): %d", len(g.deck), g.deck)
-	output += fmt.Sprintf("\n%s's turn", g.players[g.playerTurn].Name)
-	output += fmt.Sprintf("\n%d token(s) on %d", g.floatingTokens, g.deck[0])
-	for i := range g.players {
-		output += fmt.Sprintf("\n%s", g.players[i].String())
+	output += fmt.Sprintf("deck(%d): %d", len(g.Deck), g.Deck)
+	output += fmt.Sprintf("\n%s's turn", g.Players[g.PlayerTurn].Name)
+	output += fmt.Sprintf("\n%d token(s) on %d", g.FloatingTokens, g.Deck[0])
+	for i := range g.Players {
+		output += fmt.Sprintf("\n%s", g.Players[i].String())
 	}
 	return output
 }
