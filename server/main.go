@@ -9,6 +9,8 @@ func main() {
 
 	game.Action(Pass)
 	game.Action(Pass)
+	game.Action(Pass)
+	game.Action(Pass)
 	game.Action(Take)
 	fmt.Println(game)
 }

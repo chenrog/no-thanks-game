@@ -77,6 +77,7 @@ func (g *Game) Action(action Action) {
 		g.Players[g.PlayerTurn].RemoveToken()
 		g.FloatingTokens += 1
 		g.PlayerTurn += 1
+		g.PlayerTurn %= len(g.Players)
 	}
 
 	if action == Take {
