@@ -72,17 +72,14 @@ func NewGame(seed int64, playerCount int) *Game {
 	}
 }
 
-func (g *Game) Action(action int) {
-	// Pass
-	if action == 0 {
+func (g *Game) Action(action Action) {
+	if action == Pass {
 		g.Players[g.PlayerTurn].RemoveToken()
 		g.FloatingTokens += 1
 		g.PlayerTurn += 1
-		fmt.Println("here")
 	}
 
-	// Take
-	if action == 1 {
+	if action == Take {
 		g.Players[g.PlayerTurn].AddTokens(g.FloatingTokens)
 		g.FloatingTokens = 0
 		g.Players[g.PlayerTurn].AddCard(g.Deck[0])

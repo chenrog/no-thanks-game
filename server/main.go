@@ -7,8 +7,8 @@ import (
 func main() {
 	game := NewGameBuilder().Build()
 
-	game.Action(0)
-	game.Action(0)
-	game.Action(1)
+	game.Action(Pass)
+	game.Action(Pass)
+	game.Action(Take)
 	fmt.Println(game)
 }
