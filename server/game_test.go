@@ -1,6 +1,7 @@
 package main_test
 
 import (
+	"fmt"
 	. "github.com/chenrog/no-thanks-game"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -20,6 +21,28 @@ var _ = Describe("Game", func() {
 				Expect(func() { NewGameBuilder().Build() }).ToNot(Panic())
 				game := NewGameBuilder().Build()
 				Expect(len(game.Players)).To(Equal(3))
+			})
+		})
+	})
+
+	Describe("Playing a game", func() {
+		Context("with a seed of 1234", func() {
+			It("Should always have the same first 3 starting cards in the deck", func() {
+				gb := NewGameBuilder().SetSeed(1234).SetPlayerCount(3)
+				game := gb.Build()
+				Expect(game.Deck[0:3]).To(Equal([]int{14, 16, 27}))
+			})
+		})
+	})
+
+	Describe("Finishing a game", func() {
+		Context("with a seed of 1234", func() {
+			It("Should always finish the same", func() {
+				game := NewGameBuilder().SetSeed(1234).SetPlayerCount(3).Build()
+				for len(game.Deck) > 0 {
+					game.Action(Take)
+				}
+				fmt.Println(game)
 			})
 		})
 	})

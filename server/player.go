@@ -24,6 +24,10 @@ func (p *Player) AddTokens(tokens int) {
 	p.tokens += tokens
 }
 
+func (p *Player) GetTokens() int {
+	return p.tokens
+}
+
 func (p *Player) String() string {
 	return fmt.Sprintf("%s | cards: %d, tokens: %d", p.Name, p.cards, p.tokens)
 }
