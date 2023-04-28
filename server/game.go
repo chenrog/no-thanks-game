@@ -74,10 +74,6 @@ func NewGame(seed int64, playerCount int) *Game {
 	return &game
 }
 
-func (g *Game) IsOver() bool {
-	return len(g.Deck) == 0
-}
-
 func (g *Game) Action(action Action) {
 	if action == Pass {
 		g.Players[g.PlayerTurn].RemoveToken()
@@ -92,6 +88,27 @@ func (g *Game) Action(action Action) {
 		g.Players[g.PlayerTurn].AddCard(g.Deck[0])
 		g.Deck = g.Deck[1:]
 	}
+}
+
+func (g *Game) IsOver() bool {
+	return len(g.Deck) == 0
+}
+
+func (g *Game) GetWinners() []Player {
+	minScore := 9999
+	var winningPlayers []Player
+
+	for p := range g.Players {
+		if g.Players[p].GetScore() == minScore {
+			winningPlayers = append(winningPlayers, g.Players[p])
+		}
+		if g.Players[p].GetScore() < minScore {
+			winningPlayers = []Player{g.Players[p]}
+			minScore = g.Players[p].GetScore()
+		}
+	}
+
+	return winningPlayers
 }
 
 func (g *Game) String() string {

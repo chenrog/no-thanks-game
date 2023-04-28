@@ -46,6 +46,7 @@ var _ = Describe("Game", func() {
 				Expect(game.Players[0].GetScore()).To(Equal(122))
 				Expect(game.Players[1].GetScore()).To(Equal(-11))
 				Expect(game.Players[2].GetScore()).To(Equal(-11))
+				Expect(game.GetWinners()).To(Equal([]Player{game.Players[1], game.Players[2]}))
 			})
 		})
 	})
