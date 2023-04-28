@@ -19,6 +19,10 @@ func (p *Player) AddCard(card int) {
 	p.cards = append(p.cards, card)
 }
 
+func (p *Player) GetCards() []int {
+	return p.cards
+}
+
 func (p *Player) RemoveToken() {
 	p.tokens -= 1
 }
