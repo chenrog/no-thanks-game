@@ -74,6 +74,10 @@ func NewGame(seed int64, playerCount int) *Game {
 	return &game
 }
 
+func (g *Game) IsOver() bool {
+	return len(g.Deck) == 0
+}
+
 func (g *Game) Action(action Action) {
 	if action == Pass {
 		g.Players[g.PlayerTurn].RemoveToken()

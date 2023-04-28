@@ -1,7 +1,6 @@
 package main_test
 
 import (
-	"fmt"
 	. "github.com/chenrog/no-thanks-game"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -42,7 +41,9 @@ var _ = Describe("Game", func() {
 				for len(game.Deck) > 0 {
 					game.Action(Take)
 				}
-				fmt.Println(game)
+
+				Expect(game.IsOver()).To(Equal(true))
+				Expect(game.Players[0].GetScore()).To(Equal(133))
 			})
 		})
 	})
