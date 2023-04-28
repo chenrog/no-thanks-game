@@ -43,7 +43,7 @@ var _ = Describe("Game", func() {
 				}
 
 				Expect(game.IsOver()).To(Equal(true))
-				Expect(game.Players[0].GetScore()).To(Equal(133))
+				Expect(game.Players[0].GetScore()).To(Equal(122))
 			})
 		})
 	})

@@ -73,7 +73,7 @@ func (p *Player) GetScore() int {
 		return sum
 	}
 
-	return sum(stackCards(reverse(cards)))
+	return sum(stackCards(reverse(cards))) - p.tokens
 }
 
 func (p *Player) String() string {
