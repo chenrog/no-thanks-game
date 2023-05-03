@@ -32,7 +32,9 @@ var _ = Describe("Game", func() {
 	Describe("Playing a game", func() {
 		Context("with a seed", func() {
 			It("Should always have the same first 3 starting cards in the deck", func() {
-				Expect(game.Deck[0:3]).To(Equal([]int{14, 16, 27}))
+				Expect(game.Deck.Pop()).To(Equal(14))
+				Expect(game.Deck.Pop()).To(Equal(16))
+				Expect(game.Deck.Pop()).To(Equal(27))
 			})
 
 			Context("Passing a turn", func() {
@@ -67,10 +69,10 @@ var _ = Describe("Game", func() {
 				})
 
 				It("Should add the card to the player's hand from the deck", func() {
-					card := game.Deck[0]
+					card := game.Deck.CurrentCard()
 					game.Action(Take)
 
-					Expect(game.Deck[0]).ToNot(Equal(card))
+					Expect(game.Deck.CurrentCard()).ToNot(Equal(card))
 					Expect(game.Players[0].GetCards()[0]).To(Equal(card))
 				})
 			})
@@ -80,7 +82,7 @@ var _ = Describe("Game", func() {
 	Describe("Finishing a game", func() {
 		Context("with a seed", func() {
 			It("Should always finish the same", func() {
-				for len(game.Deck) > 0 {
+				for !game.Deck.Empty() {
 					game.Action(Take)
 				}
 

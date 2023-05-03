@@ -39,59 +39,64 @@ func (gb *GameBuilder) Build() *Game {
 // actual game class past this point
 
 type Game struct {
-	Deck           []int
+	Deck           *Deck
 	FloatingTokens int
 	Players        []Player
 	PlayerTurn     int
-	rand           *rand.Rand
+	seed           int64
 }
 
 func NewGame(seed int64, playerCount int) *Game {
 	game := Game{
-		Deck:           []int{},
 		FloatingTokens: 0,
 		Players:        []Player{},
 		PlayerTurn:     0,
+		seed:           seed,
 	}
-
-	// DECK SETUP
-	for i := 3; i <= 35; i++ {
-		game.Deck = append(game.Deck, i)
-	}
-
-	game.rand = rand.New(rand.NewSource(seed))
-	game.rand.Shuffle(len(game.Deck), func(i, j int) { game.Deck[i], game.Deck[j] = game.Deck[j], game.Deck[i] })
-
-	game.Deck = game.Deck[9:]
 
 	// PLAYER SETUP
 	for i := 0; i < playerCount; i++ {
-		game.Players = append(game.Players, *NewPlayer(fmt.Sprintf("player %d", i), 11))
+		game.AddPlayer()
 	}
 
-	game.rand.Shuffle(len(game.Players), func(i, j int) { game.Players[i], game.Players[j] = game.Players[j], game.Players[i] })
+	game.Start()
 
 	return &game
 }
 
+func (g *Game) Start() {
+	r := rand.New(rand.NewSource(g.seed))
+
+	g.Deck = NewDeck(g.seed)
+
+	r.Shuffle(len(g.Players), func(i, j int) { g.Players[i], g.Players[j] = g.Players[j], g.Players[i] })
+}
+
+func (g *Game) AddPlayer() {
+	g.Players = append(g.Players, *NewPlayer(fmt.Sprintf("player %d", len(g.Players)), 11))
+}
+
+func (g *Game) CurrentPlayer() *Player {
+	return &g.Players[g.PlayerTurn]
+}
+
 func (g *Game) Action(action Action) {
-	if action == Pass && g.Players[g.PlayerTurn].GetTokens() > 0 {
-		g.Players[g.PlayerTurn].RemoveToken()
+	if action == Pass && g.CurrentPlayer().GetTokens() > 0 {
+		g.CurrentPlayer().RemoveToken()
 		g.FloatingTokens += 1
 		g.PlayerTurn += 1
 		g.PlayerTurn %= len(g.Players)
 	}
 
 	if action == Take {
-		g.Players[g.PlayerTurn].AddTokens(g.FloatingTokens)
+		g.CurrentPlayer().AddTokens(g.FloatingTokens)
 		g.FloatingTokens = 0
-		g.Players[g.PlayerTurn].AddCard(g.Deck[0])
-		g.Deck = g.Deck[1:]
+		g.CurrentPlayer().AddCard(g.Deck.Pop())
 	}
 }
 
 func (g *Game) IsOver() bool {
-	return len(g.Deck) == 0
+	return g.Deck.Empty()
 }
 
 func (g *Game) GetWinners() []Player {
@@ -113,10 +118,10 @@ func (g *Game) GetWinners() []Player {
 
 func (g *Game) String() string {
 	output := ""
-	output += fmt.Sprintf("%d cards remain in the deck", len(g.Deck))
-	output += fmt.Sprintf("\n%s's turn", g.Players[g.PlayerTurn].Name)
-	if len(g.Deck) > 0 {
-		output += fmt.Sprintf("\n%d token(s) on %d", g.FloatingTokens, g.Deck[0])
+	output += fmt.Sprintf("%d cards remain in the deck", g.Deck.CardsLeft())
+	output += fmt.Sprintf("\n%s's turn", g.CurrentPlayer().Name)
+	if !g.Deck.Empty() {
+		output += fmt.Sprintf("\n%d token(s) on %d", g.FloatingTokens, g.Deck.CurrentCard())
 	}
 	for i := range g.Players {
 		output += fmt.Sprintf("\n%s", g.Players[i].String())
@@ -124,15 +129,16 @@ func (g *Game) String() string {
 	return output
 }
 
-func (g *Game) FullViewString() string {
-	output := ""
-	output += fmt.Sprintf("deck(%d): %d", len(g.Deck), g.Deck)
-	output += fmt.Sprintf("\n%s's turn", g.Players[g.PlayerTurn].Name)
-	if len(g.Deck) > 0 {
-		output += fmt.Sprintf("\n%d token(s) on %d", g.FloatingTokens, g.Deck[0])
-	}
-	for i := range g.Players {
-		output += fmt.Sprintf("\n%s", g.Players[i].String())
-	}
-	return output
-}
+// TODO: fix this up if we need a different string view
+//func (g *Game) FullViewString() string {
+//	output := ""
+//	output += fmt.Sprintf("deck(%d): %d", len(g.Deck.cards), g.Deck)
+//	output += fmt.Sprintf("\n%s's turn", g.CurrentPlayer().Name)
+//	if len(g.Deck.cards) > 0 {
+//		output += fmt.Sprintf("\n%d token(s) on %d", g.FloatingTokens, g.Deck.cards[0])
+//	}
+//	for i := range g.Players {
+//		output += fmt.Sprintf("\n%s", g.Players[i].String())
+//	}
+//	return output
+//}
