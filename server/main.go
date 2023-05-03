@@ -76,7 +76,7 @@ func initWebsocket() {
 }
 
 func main() {
-	game = NewGameBuilder().Build()
+	game = NewGame()
 
 	initWebsocket()
 

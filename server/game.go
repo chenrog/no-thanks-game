@@ -6,38 +6,6 @@ import (
 	"time"
 )
 
-type GameBuilder struct {
-	seed        int64
-	playerCount int
-}
-
-func NewGameBuilder() *GameBuilder {
-	return &GameBuilder{
-		seed:        time.Now().UnixNano(),
-		playerCount: 3,
-	}
-}
-
-func (gb *GameBuilder) SetSeed(seed int64) *GameBuilder {
-	gb.seed = seed
-	return gb
-}
-
-func (gb *GameBuilder) SetPlayerCount(count int) *GameBuilder {
-	if count < 3 || count > 7 {
-		panic("player count invalid, must be 3-7")
-	}
-
-	gb.playerCount = count
-	return gb
-}
-
-func (gb *GameBuilder) Build() *Game {
-	return NewGame(gb.seed, gb.playerCount)
-}
-
-// actual game class past this point
-
 type Game struct {
 	Deck           *Deck
 	FloatingTokens int
@@ -46,20 +14,17 @@ type Game struct {
 	seed           int64
 }
 
-func NewGame(seed int64, playerCount int) *Game {
+func NewGame() *Game {
+	return NewGameWithSeed(time.Now().UnixNano())
+}
+
+func NewGameWithSeed(seed int64) *Game {
 	game := Game{
 		FloatingTokens: 0,
 		Players:        []Player{},
 		PlayerTurn:     0,
 		seed:           seed,
 	}
-
-	// PLAYER SETUP
-	for i := 0; i < playerCount; i++ {
-		game.AddPlayer()
-	}
-
-	game.Start()
 
 	return &game
 }
@@ -80,12 +45,16 @@ func (g *Game) CurrentPlayer() *Player {
 	return &g.Players[g.PlayerTurn]
 }
 
+func (g *Game) PlayerCount() int {
+	return len(g.Players)
+}
+
 func (g *Game) Action(action Action) {
 	if action == Pass && g.CurrentPlayer().GetTokens() > 0 {
 		g.CurrentPlayer().RemoveToken()
 		g.FloatingTokens += 1
 		g.PlayerTurn += 1
-		g.PlayerTurn %= len(g.Players)
+		g.PlayerTurn %= g.PlayerCount()
 	}
 
 	if action == Take {
