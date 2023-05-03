@@ -20,7 +20,7 @@ func NewDeck(seed int64) *Deck {
 	return &Deck{cards: cards}
 }
 
-// Pop removes the first element and returns it
+// Pop removes the FIRST element and returns it
 func (d *Deck) Pop() int {
 	card := d.CurrentCard()
 	d.cards = d.cards[1:]
