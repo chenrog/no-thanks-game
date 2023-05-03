@@ -74,9 +74,8 @@ func NewGame(seed int64, playerCount int) *Game {
 	return &game
 }
 
-// TODO: make it illegal to pass without enough tokens, that might not go here though
 func (g *Game) Action(action Action) {
-	if action == Pass {
+	if action == Pass && g.Players[g.PlayerTurn].GetTokens() > 0 {
 		g.Players[g.PlayerTurn].RemoveToken()
 		g.FloatingTokens += 1
 		g.PlayerTurn += 1

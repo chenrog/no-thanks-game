@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/olahol/melody"
 	"log"
 	"net/http"
@@ -29,7 +30,30 @@ func initWebsocket() {
 		}
 	})
 
-	//melodyRouter.HandleConnect()
+	melodyRouter.HandleConnect(func(session *melody.Session) {
+		sessions, _ := melodyRouter.Sessions()
+
+		for _, s := range sessions {
+			_, exists := s.Get("info")
+
+			if !exists {
+				continue
+			}
+
+			err := session.Write([]byte("you are an existing session"))
+			if err != nil {
+				return
+			}
+		}
+
+		id := uuid.NewString()
+		session.Set("info", id)
+
+		err := session.Write([]byte("iam " + id))
+		if err != nil {
+			return
+		}
+	})
 	//melodyRouter.HandleDisconnect()
 
 	melodyRouter.HandleMessage(func(s *melody.Session, msg []byte) {

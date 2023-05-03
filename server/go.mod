@@ -3,6 +3,7 @@ module github.com/chenrog/no-thanks-game
 go 1.20
 
 require (
+	github.com/google/uuid v1.3.0
 	github.com/olahol/melody v1.1.3
 	github.com/onsi/ginkgo/v2 v2.9.2
 	github.com/onsi/gomega v1.27.6
