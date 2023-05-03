@@ -114,6 +114,19 @@ func (g *Game) GetWinners() []Player {
 
 func (g *Game) String() string {
 	output := ""
+	output += fmt.Sprintf("%d cards remain in the deck", len(g.Deck))
+	output += fmt.Sprintf("\n%s's turn", g.Players[g.PlayerTurn].Name)
+	if len(g.Deck) > 0 {
+		output += fmt.Sprintf("\n%d token(s) on %d", g.FloatingTokens, g.Deck[0])
+	}
+	for i := range g.Players {
+		output += fmt.Sprintf("\n%s", g.Players[i].String())
+	}
+	return output
+}
+
+func (g *Game) FullViewString() string {
+	output := ""
 	output += fmt.Sprintf("deck(%d): %d", len(g.Deck), g.Deck)
 	output += fmt.Sprintf("\n%s's turn", g.Players[g.PlayerTurn].Name)
 	if len(g.Deck) > 0 {
