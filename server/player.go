@@ -9,6 +9,7 @@ type Player struct {
 	Name   string
 	cards  []int
 	tokens int
+	Uuid   string
 }
 
 func NewPlayer(name string, tokens int) *Player {
@@ -39,21 +40,24 @@ func (p *Player) GetScore() int {
 	sort.Ints(p.cards)
 	cards := p.cards
 
-	reverse := func(numbers []int) []int {
-		var reversed []int
-		for range numbers {
-			reversed = append(reversed, 0)
-		}
-
-		for i, j := 0, len(numbers)-1; i < j; i, j = i+1, j-1 {
-			reversed[i], reversed[j] = numbers[j], numbers[i]
-		}
-
-		return reversed
-	}
-
 	stackCards := func(cards []int) []int {
+		reverse := func(numbers []int) []int {
+			var reversed []int
+			for range numbers {
+				reversed = append(reversed, 0)
+			}
+
+			for i, j := 0, len(numbers)-1; i < j; i, j = i+1, j-1 {
+				reversed[i], reversed[j] = numbers[j], numbers[i]
+			}
+
+			return reversed
+		}
+
+		cards = reverse(cards)
+
 		var stackedCards []int
+
 		for i := range cards {
 			if i == (len(cards) - 1) {
 				stackedCards = append(stackedCards, cards[i])
@@ -77,7 +81,7 @@ func (p *Player) GetScore() int {
 		return sum
 	}
 
-	return sum(stackCards(reverse(cards))) - p.tokens
+	return sum(stackCards(cards)) - p.tokens
 }
 
 func (p *Player) String() string {

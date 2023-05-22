@@ -31,9 +31,7 @@ func NewGameWithSeed(seed int64) *Game {
 
 func (g *Game) Start() {
 	r := rand.New(rand.NewSource(g.seed))
-
 	g.Deck = NewDeck(g.seed)
-
 	r.Shuffle(len(g.Players), func(i, j int) { g.Players[i], g.Players[j] = g.Players[j], g.Players[i] })
 }
 
