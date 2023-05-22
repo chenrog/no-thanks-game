@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"sort"
 )
 
@@ -51,23 +52,27 @@ func (p *Player) GetScore() int {
 			return reversed
 		}
 
-		cards = reverse(cards)
+		reversedCards := reverse(cards)
 
-		var stackedCards []int
+		var scoredCards []int
 
-		for i := range cards {
-			if i == (len(cards) - 1) {
-				stackedCards = append(stackedCards, cards[i])
+		for i := range reversedCards {
+			lastCard := i == len(reversedCards)-1
+			areSequentialCards := func(c1 int, c2 int) bool {
+				return math.Abs(float64(c1-c2)) == 1
+			}
+
+			if lastCard {
+				scoredCards = append(scoredCards, reversedCards[i])
 				break
 			}
 
-			if cards[i] != (cards[i+1] + 1) {
-				stackedCards = append(stackedCards, cards[i])
-				cards[i] = 0
+			if !areSequentialCards(reversedCards[i], reversedCards[i+1]) {
+				scoredCards = append(scoredCards, reversedCards[i])
 			}
 		}
 
-		return stackedCards
+		return scoredCards
 	}
 
 	sum := func(numbers []int) int {
