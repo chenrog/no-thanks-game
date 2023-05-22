@@ -7,11 +7,11 @@ import (
 )
 
 type Game struct {
-	Deck           *Deck
-	FloatingTokens int
-	Players        []Player
-	PlayerTurn     int
-	seed           int64
+	Deck         *Deck
+	TokensOnCard int
+	Players      []Player
+	PlayerTurn   int
+	seed         int64
 }
 
 func NewGame() *Game {
@@ -20,10 +20,10 @@ func NewGame() *Game {
 
 func NewGameWithSeed(seed int64) *Game {
 	game := Game{
-		FloatingTokens: 0,
-		Players:        []Player{},
-		PlayerTurn:     0,
-		seed:           seed,
+		TokensOnCard: 0,
+		Players:      []Player{},
+		PlayerTurn:   0,
+		seed:         seed,
 	}
 
 	return &game
@@ -49,21 +49,20 @@ func (g *Game) PlayerCount() int {
 
 func (g *Game) Action(action Action) {
 	if action == Pass && g.CurrentPlayer().GetTokens() > 0 {
-		g.CurrentPlayer().RemoveToken()
-		g.FloatingTokens += 1
+		g.CurrentPlayer().BetToken()
+		g.TokensOnCard += 1
 		g.PlayerTurn += 1
 		g.PlayerTurn %= g.PlayerCount()
 	}
 
 	if action == Take {
-		g.CurrentPlayer().AddTokens(g.FloatingTokens)
-		g.FloatingTokens = 0
-		g.CurrentPlayer().AddCard(g.Deck.Pop())
+		g.CurrentPlayer().TakeCard(g.Deck.TakeCurrentCard(), g.TokensOnCard)
+		g.TokensOnCard = 0
 	}
 }
 
 func (g *Game) IsOver() bool {
-	return g.Deck.Empty()
+	return g.Deck.IsEmpty()
 }
 
 func (g *Game) GetWinners() []Player {
@@ -87,25 +86,11 @@ func (g *Game) String() string {
 	output := ""
 	output += fmt.Sprintf("%d cards remain in the deck", g.Deck.CardsLeft())
 	output += fmt.Sprintf("\n%s's turn", g.CurrentPlayer().Name)
-	if !g.Deck.Empty() {
-		output += fmt.Sprintf("\n%d token(s) on %d", g.FloatingTokens, g.Deck.CurrentCard())
+	if !g.Deck.IsEmpty() {
+		output += fmt.Sprintf("\n%d token(s) on %d", g.TokensOnCard, g.Deck.CurrentCard())
 	}
 	for i := range g.Players {
 		output += fmt.Sprintf("\n%s", g.Players[i].String())
 	}
 	return output
 }
-
-// TODO: fix this up if we need a different string view
-//func (g *Game) FullViewString() string {
-//	output := ""
-//	output += fmt.Sprintf("deck(%d): %d", len(g.Deck.cards), g.Deck)
-//	output += fmt.Sprintf("\n%s's turn", g.CurrentPlayer().Name)
-//	if len(g.Deck.cards) > 0 {
-//		output += fmt.Sprintf("\n%d token(s) on %d", g.FloatingTokens, g.Deck.cards[0])
-//	}
-//	for i := range g.Players {
-//		output += fmt.Sprintf("\n%s", g.Players[i].String())
-//	}
-//	return output
-//}

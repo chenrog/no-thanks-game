@@ -16,20 +16,17 @@ func NewPlayer(name string, tokens int) *Player {
 	return &Player{Name: name, tokens: tokens}
 }
 
-func (p *Player) AddCard(card int) {
+func (p *Player) TakeCard(card int, tokensOnCard int) {
 	p.cards = append(p.cards, card)
+	p.tokens += tokensOnCard
 }
 
 func (p *Player) GetCards() []int {
 	return p.cards
 }
 
-func (p *Player) RemoveToken() {
+func (p *Player) BetToken() {
 	p.tokens -= 1
-}
-
-func (p *Player) AddTokens(tokens int) {
-	p.tokens += tokens
 }
 
 func (p *Player) GetTokens() int {

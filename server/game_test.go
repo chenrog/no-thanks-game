@@ -19,9 +19,9 @@ var _ = Describe("Game", func() {
 	Describe("Playing a game", func() {
 		Context("with a seed", func() {
 			It("Should always have the same first 3 starting cards in the deck", func() {
-				Expect(game.Deck.Pop()).To(Equal(14))
-				Expect(game.Deck.Pop()).To(Equal(16))
-				Expect(game.Deck.Pop()).To(Equal(27))
+				Expect(game.Deck.TakeCurrentCard()).To(Equal(14))
+				Expect(game.Deck.TakeCurrentCard()).To(Equal(16))
+				Expect(game.Deck.TakeCurrentCard()).To(Equal(27))
 			})
 		})
 
@@ -35,7 +35,7 @@ var _ = Describe("Game", func() {
 			It("Should increase the tokens on the card by 1 and take from the player who passed", func() {
 				tokensExpected := game.Players[0].GetTokens() - 1
 				game.Action(Pass)
-				Expect(game.FloatingTokens).To(Equal(1))
+				Expect(game.TokensOnCard).To(Equal(1))
 				Expect(game.Players[0].GetTokens()).To(Equal(tokensExpected))
 			})
 		})
@@ -52,7 +52,7 @@ var _ = Describe("Game", func() {
 				game.Action(Pass)
 				game.Action(Pass)
 				game.Action(Take)
-				Expect(game.FloatingTokens).To(Equal(0))
+				Expect(game.TokensOnCard).To(Equal(0))
 				Expect(game.Players[2].GetTokens()).To(Equal(tokensExpected))
 			})
 
@@ -69,7 +69,7 @@ var _ = Describe("Game", func() {
 	Describe("Finishing a game", func() {
 		Context("with a seed", func() {
 			It("Should always finish the same", func() {
-				for !game.Deck.Empty() {
+				for !game.Deck.IsEmpty() {
 					game.Action(Take)
 				}
 
