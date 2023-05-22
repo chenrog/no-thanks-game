@@ -36,36 +36,21 @@ func (p *Player) GetTokens() int {
 
 func (p *Player) GetScore() int {
 	sort.Ints(p.cards)
-	cards := p.cards
+	var scoredCardsSum int
 
-	scoredCards := func(cards []int) []int {
-		var scoredCards []int
-
-		for i := range cards {
-			firstCard := i == 0
-			areSequentialCards := func(c1 int, c2 int) bool {
-				return math.Abs(float64(c1-c2)) == 1
-			}
-
-			if firstCard {
-				scoredCards = append(scoredCards, cards[i])
-			} else if !areSequentialCards(cards[i], cards[i-1]) {
-				scoredCards = append(scoredCards, cards[i])
-			}
+	for i := range p.cards {
+		areSequentialCards := func(c1 int, c2 int) bool {
+			return math.Abs(float64(c1-c2)) == 1
 		}
 
-		return scoredCards
-	}
-
-	sum := func(numbers []int) int {
-		sum := 0
-		for _, i := range numbers {
-			sum += i
+		if firstCard := i == 0; firstCard {
+			scoredCardsSum += p.cards[i]
+		} else if !areSequentialCards(p.cards[i], p.cards[i-1]) {
+			scoredCardsSum += p.cards[i]
 		}
-		return sum
 	}
 
-	return sum(scoredCards(cards)) - p.tokens
+	return scoredCardsSum - p.tokens
 }
 
 func (p *Player) String() string {
