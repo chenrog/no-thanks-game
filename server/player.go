@@ -38,37 +38,19 @@ func (p *Player) GetScore() int {
 	sort.Ints(p.cards)
 	cards := p.cards
 
-	stackCards := func(cards []int) []int {
-		reverse := func(numbers []int) []int {
-			var reversed []int
-			for range numbers {
-				reversed = append(reversed, 0)
-			}
-
-			for i, j := 0, len(numbers)-1; i < j; i, j = i+1, j-1 {
-				reversed[i], reversed[j] = numbers[j], numbers[i]
-			}
-
-			return reversed
-		}
-
-		reversedCards := reverse(cards)
-
+	scoredCards := func(cards []int) []int {
 		var scoredCards []int
 
-		for i := range reversedCards {
-			lastCard := i == len(reversedCards)-1
+		for i := range cards {
+			firstCard := i == 0
 			areSequentialCards := func(c1 int, c2 int) bool {
 				return math.Abs(float64(c1-c2)) == 1
 			}
 
-			if lastCard {
-				scoredCards = append(scoredCards, reversedCards[i])
-				break
-			}
-
-			if !areSequentialCards(reversedCards[i], reversedCards[i+1]) {
-				scoredCards = append(scoredCards, reversedCards[i])
+			if firstCard {
+				scoredCards = append(scoredCards, cards[i])
+			} else if !areSequentialCards(cards[i], cards[i-1]) {
+				scoredCards = append(scoredCards, cards[i])
 			}
 		}
 
@@ -83,7 +65,7 @@ func (p *Player) GetScore() int {
 		return sum
 	}
 
-	return sum(stackCards(cards)) - p.tokens
+	return sum(scoredCards(cards)) - p.tokens
 }
 
 func (p *Player) String() string {
