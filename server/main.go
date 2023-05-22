@@ -48,7 +48,7 @@ func initWebsocket() {
 		}
 
 		id := uuid.NewString()
-		player := NewPlayer("", 0)
+		player := NewPlayer("")
 		player.Uuid = id
 		session.Set("info", player)
 		game.AddPlayer()

@@ -32,11 +32,28 @@ func NewGameWithSeed(seed int64) *Game {
 func (g *Game) Start() {
 	r := rand.New(rand.NewSource(g.seed))
 	g.Deck = NewDeck(g.seed)
+	for p := range g.Players {
+		g.Players[p].SetStartingTokens(g.startingTokenAmount())
+	}
 	r.Shuffle(len(g.Players), func(i, j int) { g.Players[i], g.Players[j] = g.Players[j], g.Players[i] })
 }
 
+func (g *Game) startingTokenAmount() int {
+	var tokens int
+	if len(g.Players) < 6 {
+		tokens = 11
+	} else if len(g.Players) == 6 {
+		tokens = 9
+	} else if len(g.Players) == 7 {
+		tokens = 7
+	}
+
+	return tokens
+}
+
 func (g *Game) AddPlayer() {
-	g.Players = append(g.Players, *NewPlayer(fmt.Sprintf("player %d", len(g.Players)), 11))
+	playerName := fmt.Sprintf("player %d", len(g.Players))
+	g.Players = append(g.Players, *NewPlayer(playerName))
 }
 
 func (g *Game) CurrentPlayer() *Player {
@@ -51,8 +68,7 @@ func (g *Game) Action(action Action) {
 	if action == Pass && g.CurrentPlayer().GetTokens() > 0 {
 		g.CurrentPlayer().BetToken()
 		g.TokensOnCard += 1
-		g.PlayerTurn += 1
-		g.PlayerTurn %= g.PlayerCount()
+		g.PlayerTurn = (g.PlayerTurn + 1) % g.PlayerCount()
 	}
 
 	if action == Take {

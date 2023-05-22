@@ -13,8 +13,8 @@ type Player struct {
 	Uuid   string
 }
 
-func NewPlayer(name string, tokens int) *Player {
-	return &Player{Name: name, tokens: tokens}
+func NewPlayer(name string) *Player {
+	return &Player{Name: name}
 }
 
 func (p *Player) TakeCard(card int, tokensOnCard int) {
@@ -24,6 +24,10 @@ func (p *Player) TakeCard(card int, tokensOnCard int) {
 
 func (p *Player) GetCards() []int {
 	return p.cards
+}
+
+func (p *Player) SetStartingTokens(tokens int) {
+	p.tokens = tokens
 }
 
 func (p *Player) BetToken() {
@@ -38,15 +42,15 @@ func (p *Player) GetScore() int {
 	sort.Ints(p.cards)
 	var scoredCardsSum int
 
-	for i := range p.cards {
+	for c := range p.cards {
 		areSequentialCards := func(c1 int, c2 int) bool {
 			return math.Abs(float64(c1-c2)) == 1
 		}
 
-		if firstCard := i == 0; firstCard {
-			scoredCardsSum += p.cards[i]
-		} else if !areSequentialCards(p.cards[i], p.cards[i-1]) {
-			scoredCardsSum += p.cards[i]
+		if firstCard := c == 0; firstCard {
+			scoredCardsSum += p.cards[c]
+		} else if !areSequentialCards(p.cards[c], p.cards[c-1]) {
+			scoredCardsSum += p.cards[c]
 		}
 	}
 
