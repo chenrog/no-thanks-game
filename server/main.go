@@ -19,10 +19,6 @@ func initWebsocket() {
 	// Thus, we have to manually increase it
 	//melodyRouter.Config.MaxMessageSize = 8192
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "index.html")
-	})
-
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		err := melodyRouter.HandleRequest(w, r)
 		if err != nil {
